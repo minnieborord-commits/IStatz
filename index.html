@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Statz Elite v8</title>
-    
+    <title>Statz Elite v11</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,60 +14,59 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* Header Area */
         header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: #000; height: 70px; border-bottom: 2px solid #222; flex-shrink: 0; }
         .q-nav { display: flex; gap: 12px; }
         .q-btn { padding: 12px 25px; border: none; background: #222; color: #888; border-radius: 8px; font-weight: 900; font-size: 1.2rem; }
         .q-btn.active { background: var(--accent); color: #000; }
         #game-score { font-weight: 900; color: var(--accent); font-size: 1.5rem; }
 
-        /* Labels Bar - Sub Header */
         .labels-bar { display: grid; grid-template-columns: 1fr 1fr 400px; padding: 5px 10px; background: #111; border-bottom: 1px solid #333; }
         .label-group { display: flex; width: 100%; font-size: 0.75rem; font-weight: 900; color: #666; text-transform: uppercase; }
         .label-cell { flex: 1; text-align: center; }
 
-        /* Main Viewport */
         main { display: grid; grid-template-columns: 1fr 1fr 400px; flex: 1; gap: 10px; padding: 10px; overflow: hidden; }
         .p-col { display: grid; grid-template-rows: repeat(11, 1fr); gap: 8px; }
         
-        /* Triple Striped Player Button */
         .p-btn { 
             background: linear-gradient(90deg, var(--h-blue) 33.3%, var(--h-red) 33.3%, var(--h-red) 66.6%, var(--h-blue) 66.6%);
             border: 2px solid #444; border-radius: 10px; display: flex; align-items: center; padding: 0; cursor: pointer; height: 100%; position: relative;
+            transition: transform 0.05s;
         }
         .p-btn.active { border-color: var(--accent); border-width: 3px; box-shadow: 0 0 15px var(--accent); z-index: 10; }
         
+        @keyframes flash { 0% { filter: brightness(1); } 50% { filter: brightness(2.5); } 100% { filter: brightness(1); } }
+        .stat-flash { animation: flash 0.15s ease-out; }
+
         .p-part { flex: 1; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; font-weight: 900; text-shadow: 2px 2px 3px #000; }
         .p-part.name-area { flex-direction: column; font-size: 1.2rem; line-height: 1.1; }
         .p-part.q-area { font-size: 1rem; color: #fff; border-left: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); }
         .p-part.total-area { font-size: 1rem; color: var(--accent); }
 
-        /* Control Panel (Right 1/3) */
         .control-panel { display: flex; flex-direction: column; gap: 12px; background: #111; border-radius: 15px; padding: 20px; border: 1px solid #333; }
-        .active-label h2 { margin: 0; color: var(--accent); font-size: 2.2rem; text-align: center; text-transform: uppercase; border-bottom: 2px solid #333; padding-bottom: 10px; min-height: 50px; }
+        
+        /* Unified Yellow Header Line */
+        .active-label { border-bottom: 2px solid #333; padding-bottom: 15px; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+        .active-label h2 { margin: 0; color: var(--accent); font-size: 1.8rem; text-align: center; text-transform: uppercase; font-weight: 900; }
+
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); gap: 12px; flex: 1; }
-        .s-btn { border: none; border-radius: 15px; display: flex; align-items: center; justify-content: center; background: var(--h-blue); color: white; font-weight: 900; font-size: 2.8rem; }
-        .s-btn:active { transform: scale(0.95); background: #004494; }
+        .s-btn { border: none; border-radius: 15px; display: flex; align-items: center; justify-content: center; background: var(--h-blue); color: white; font-weight: 900; font-size: 2.8rem; cursor: pointer; }
+        .s-btn:active { transform: scale(0.92); filter: brightness(1.5); }
+        
         .btn-goal { background: #27ae60 !important; }
         .btn-point { background: #e67e22 !important; }
-        
         .undo-huge { background: #444; color: white; border: none; height: 100px; border-radius: 15px; font-weight: 900; font-size: 2rem; letter-spacing: 4px; }
         .nav-summary-btn { height: 65px; border: none; border-radius: 10px; font-weight: 900; background: #222; color: #fff; font-size: 1.2rem; width: 100%; border: 1px solid #444; }
 
-        /* Summary View Overlay */
         #summary-view { position: fixed; inset: 0; background: #000; z-index: 500; display: none; flex-direction: column; padding: 20px; }
         .sum-table { width: 100%; border-collapse: collapse; color: #fff; }
         .sum-table th { background: #222; padding: 12px 8px; text-align: left; color: var(--accent); font-size: 0.7rem; border: 1px solid #333; position: sticky; top: 0; text-transform: uppercase; }
         .sum-table td { padding: 10px 8px; border: 1px solid #222; font-size: 0.95rem; white-space: nowrap; }
         .sum-table tr:nth-child(even) { background: #0a0a0a; }
 
-        /* Action Buttons on Summary */
         .sum-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; }
         .btn-action { height: 60px; border: none; border-radius: 8px; font-weight: 900; color: white; cursor: pointer; font-size: 1.1rem; }
 
-        /* Player Edit Modal */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 600; display: none; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
         .modal-content { background: #1a1a1a; padding: 30px; border-radius: 15px; border: 2px solid var(--accent); width: 400px; }
         input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #444; color: white; border-radius: 8px; font-size: 1.2rem; }
     </style>
@@ -87,8 +85,8 @@
 </header>
 
 <div class="labels-bar">
-    <div class="label-group"><div class="label-cell" style="width:33.3%">Player</div><div class="label-cell" style="width:33.3%">Current Quarter</div><div class="label-cell" style="width:33.3%">Game Total</div></div>
-    <div class="label-group"><div class="label-cell" style="width:33.3%">Player</div><div class="label-cell" style="width:33.3%">Current Quarter</div><div class="label-cell" style="width:33.3%">Game Total</div></div>
+    <div class="label-group"><div class="label-cell" style="width:33.3%">Player</div><div class="label-cell" style="width:33.3%">Current Q</div><div class="label-cell" style="width:33.3%">Game Total</div></div>
+    <div class="label-group"><div class="label-cell" style="width:33.3%">Player</div><div class="label-cell" style="width:33.3%">Current Q</div><div class="label-cell" style="width:33.3%">Game Total</div></div>
     <div class="label-group" style="justify-content:center">Command Center</div>
 </div>
 
@@ -96,7 +94,9 @@
     <div class="p-col" id="col-1"></div>
     <div class="p-col" id="col-2"></div>
     <div class="control-panel">
-        <div class="active-label"><h2 id="p-active-name">SELECT PLAYER</h2></div>
+        <div class="active-label">
+            <h2 id="p-active-header">SELECT PLAYER</h2>
+        </div>
         <div class="stat-grid">
             <button class="s-btn" onclick="add('k')">K</button>
             <button class="s-btn" onclick="add('h')">H</button>
@@ -134,7 +134,7 @@
     </div>
 </div>
 
-<div id="setup-modal" class="modal">
+<div id="setup-modal" class="modal" style="display:none">
     <div class="modal-content">
         <h3>Edit Player</h3>
         <input type="number" id="edit-num" placeholder="No.">
@@ -144,16 +144,14 @@
 </div>
 
 <script>
-    // DATA PERSISTENCE
-    let players = JSON.parse(localStorage.getItem('statz_v8_data')) || Array.from({length: 22}, (_, i) => ({
+    let players = JSON.parse(localStorage.getItem('statz_v11_data')) || Array.from({length: 22}, (_, i) => ({
         num: (i+1).toString().padStart(2, '0'),
         name: 'Player ' + (i+1),
         stats: { 1:{k:0,h:0,m:0,t:0,g:0,b:0}, 2:{k:0,h:0,m:0,t:0,g:0,b:0}, 3:{k:0,h:0,m:0,t:0,g:0,b:0}, 4:{k:0,h:0,m:0,t:0,g:0,b:0} }
     }));
 
-    let activeIdx = null, editIdx = null, currentQ = 1, history = [];
+    let activeIdx = null, currentQ = 1, history = [];
 
-    // CORE RENDERING
     function render() {
         const c1 = document.getElementById('col-1'), c2 = document.getElementById('col-2');
         c1.innerHTML = ''; c2.innerHTML = '';
@@ -162,6 +160,7 @@
             const ts = { k: sum(p,'k'), h: sum(p,'h'), m: sum(p,'m'), t: sum(p,'t') };
             const btn = document.createElement('div');
             btn.className = `p-btn ${activeIdx === i ? 'active' : ''}`;
+            btn.id = `p-btn-${i}`;
             btn.onclick = () => selectPlayer(i);
             btn.ondblclick = () => editPlayer(i);
             btn.innerHTML = `
@@ -171,17 +170,56 @@
             (i < 11 ? c1 : c2).appendChild(btn);
         });
         updateScore();
+        updateActiveDisplay();
     }
 
-    // STAT LOGIC
-    function selectPlayer(i) { activeIdx = i; document.getElementById('p-active-name').innerText = players[i].name.toUpperCase(); render(); }
-    function editPlayer(i) { editIdx = i; document.getElementById('edit-num').value = players[i].num; document.getElementById('edit-name').value = players[i].name; document.getElementById('setup-modal').classList.add('active'); }
-    function savePlayer() { players[editIdx].num = document.getElementById('edit-num').value.padStart(2, '0'); players[editIdx].name = document.getElementById('edit-name').value; save(); document.getElementById('setup-modal').classList.remove('active'); render(); }
-    function add(type) { if(activeIdx === null) return; players[activeIdx].stats[currentQ][type]++; history.push({idx: activeIdx, q: currentQ, type}); save(); render(); }
-    function undo() { if(!history.length) return; const l = history.pop(); players[l.idx].stats[l.q][l.type]--; save(); render(); }
-    function setQ(q) { currentQ = q; document.querySelectorAll('.q-btn').forEach((b, i) => b.classList.toggle('active', i+1 === q)); render(); }
+    function selectPlayer(i) { 
+        activeIdx = i; 
+        render(); 
+    }
+
+    function updateActiveDisplay() {
+        const headerDiv = document.getElementById('p-active-header');
+        if (activeIdx !== null) {
+            const p = players[activeIdx];
+            const qs = p.stats[currentQ];
+            headerDiv.innerText = `${p.name.toUpperCase()}  ${qs.g}.${qs.b}`;
+        } else {
+            headerDiv.innerText = "SELECT PLAYER";
+        }
+    }
+
+    function add(type) { 
+        if(activeIdx === null) return;
+        if (window.navigator.vibrate) window.navigator.vibrate(20);
+        const btn = document.getElementById(`p-btn-${activeIdx}`);
+        if(btn) {
+            btn.classList.remove('stat-flash');
+            void btn.offsetWidth;
+            btn.classList.add('stat-flash');
+        }
+        players[activeIdx].stats[currentQ][type]++;
+        history.push({idx: activeIdx, q: currentQ, type});
+        save();
+        render();
+    }
+
+    function undo() { 
+        if(!history.length) return; 
+        const l = history.pop(); 
+        players[l.idx].stats[l.q][l.type]--; 
+        save(); 
+        render(); 
+    }
+
+    function setQ(q) { 
+        currentQ = q; 
+        document.querySelectorAll('.q-btn').forEach((b, i) => b.classList.toggle('active', i+1 === q)); 
+        render(); 
+    }
+
     function sum(p, key) { return [1,2,3,4].reduce((a, q) => a + p.stats[q][key], 0); }
-    function save() { localStorage.setItem('statz_v8_data', JSON.stringify(players)); }
+    function save() { localStorage.setItem('statz_v11_data', JSON.stringify(players)); }
     
     function updateScore() {
         let goals = 0, behinds = 0;
@@ -189,7 +227,6 @@
         document.getElementById('game-score').innerText = `${goals}.${behinds} (${goals*6 + behinds})`;
     }
 
-    // SUMMARY & TOOLS
     function showSummary() {
         const sorted = [...players].sort((a,b) => parseInt(a.num) - parseInt(b.num));
         document.getElementById('sum-body').innerHTML = sorted.map(p => {
@@ -215,38 +252,35 @@
 
     function closeSummary() { document.getElementById('summary-view').style.display = 'none'; }
     
-    function resetStatsOnly() {
-        if(confirm("Clear all match scores but keep player names?")) {
-            players.forEach(p => { p.stats = { 1:{k:0,h:0,m:0,t:0,g:0,b:0}, 2:{k:0,h:0,m:0,t:0,g:0,b:0}, 3:{k:0,h:0,m:0,t:0,g:0,b:0}, 4:{k:0,h:0,m:0,t:0,g:0,b:0} }; });
-            history = []; save(); location.reload();
-        }
-    }
-
-    function resetAll() {
-        if(confirm("FULL RESET: This will wipe team names and all stats. Continue?")) {
-            localStorage.clear(); location.reload();
-        }
-    }
-
     function exportCSV() {
-        let csv = "Num,Name,Possessions,Goals,Behinds,Kicks,Handballs,Marks,Tackles,Q1,Q2,Q3,Q4\n";
+        let headers = [
+            "Num", "Name", "Total Poss", "Goals", "Behinds", "Total K", "Total H", "Total M", "Total T",
+            "Q1_K", "Q1_H", "Q1_M", "Q1_T", "Q2_K", "Q2_H", "Q2_M", "Q2_T", 
+            "Q3_K", "Q3_H", "Q3_M", "Q3_T", "Q4_K", "Q4_H", "Q4_M", "Q4_T"
+        ];
+        let csvRows = [headers.join(",")];
         players.forEach(p => {
-            const qStr = (q) => { const s=p.stats[q]; return `K${s.k} H${s.h} M${s.m} T${s.t}`; };
-            csv += `${p.num},${p.name},${sum(p,'k')+sum(p,'h')},${sum(p,'g')},${sum(p,'b')},${sum(p,'k')},${sum(p,'h')},${sum(p,'m')},${sum(p,'t')},"${qStr(1)}","${qStr(2)}","${qStr(3)}","${qStr(4)}"\n`;
+            let row = [
+                p.num, p.name, sum(p,'k')+sum(p,'h'), sum(p,'g'), sum(p,'b'),
+                sum(p,'k'), sum(p,'h'), sum(p,'m'), sum(p,'t')
+            ];
+            [1, 2, 3, 4].forEach(q => {
+                row.push(p.stats[q].k, p.stats[q].h, p.stats[q].m, p.stats[q].t);
+            });
+            csvRows.push(row.join(","));
         });
         const a = document.createElement('a'); 
-        a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); 
-        a.download=`match_stats_${new Date().toLocaleDateString()}.csv`; 
+        a.href = URL.createObjectURL(new Blob([csvRows.join("\n")], {type:'text/csv'})); 
+        a.download=`statz_export_${new Date().toLocaleDateString()}.csv`; 
         a.click();
     }
 
-    // PWA REGISTRATION
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js');
-        });
-    }
+    function resetStatsOnly() { if(confirm("Clear all scores but keep player names?")) { players.forEach(p => { p.stats = { 1:{k:0,h:0,m:0,t:0,g:0,b:0}, 2:{k:0,h:0,m:0,t:0,g:0,b:0}, 3:{k:0,h:0,m:0,t:0,g:0,b:0}, 4:{k:0,h:0,m:0,t:0,g:0,b:0} }; }); history = []; save(); location.reload(); } }
+    function resetAll() { if(confirm("FULL RESET: This will wipe team names and all stats. Continue?")) { localStorage.clear(); location.reload(); } }
+    function editPlayer(i) { editIdx = i; document.getElementById('edit-num').value = players[i].num; document.getElementById('edit-name').value = players[i].name; document.getElementById('setup-modal').style.display = 'flex'; }
+    function savePlayer() { players[editIdx].num = document.getElementById('edit-num').value.padStart(2, '0'); players[editIdx].name = document.getElementById('edit-name').value; save(); document.getElementById('setup-modal').style.display = 'none'; render(); }
 
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
     render();
 </script>
 </body>
